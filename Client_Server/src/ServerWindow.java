@@ -10,7 +10,7 @@ public class ServerWindow extends JFrame{
     JButton btnStart, btnExit;
     SettingWindow settingWindow;
     JTextArea log;
-    JFrame logF;
+    JPanel logF;
 
     boolean isServerWorking;
 
@@ -24,7 +24,14 @@ public class ServerWindow extends JFrame{
         btnStart = new JButton("Start");
         btnExit = new JButton("Exit");
 
+        JPanel logJP = new JPanel();
 
+
+        log = new JTextArea("Server started " + isServerWorking + "\n");
+        log.setBounds(10,30, 200,200);
+        setVisible(true);
+        logJP.add(log);
+        add(logJP);
 
 
 
@@ -41,13 +48,12 @@ public class ServerWindow extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 isServerWorking = true;
-                logF = new JFrame();
                 log = new JTextArea("Server started " + isServerWorking + "\n");
                 log.setBounds(10,30, 200,200);
-                logF.add(log);
-                logF.setSize(300,300);
-                logF.setLayout(null);
-                logF.setVisible(true);
+                setVisible(true);
+                logJP.add(log);
+                add(logJP);
+
 
 //                System.out.println("Server started " + isServerWorking + "\n");
 //                settingWindow.setVisible(true);
