@@ -11,7 +11,7 @@ public class ServerWindow extends JFrame{
     JButton btnStart, btnExit; //
     SettingWindow settingWindow; // window
     JTextArea log; // text area
-    JPanel logF; // pannel
+    JPanel logP; // pannel
     Map map;
 
 
@@ -30,11 +30,13 @@ public class ServerWindow extends JFrame{
         btnStart = new JButton("Start"); // инициализация кнопки
         btnExit = new JButton("Exit"); // инициализация кнопки
         settingWindow = new SettingWindow(this); // setting window
-//        logF = new JPanel(); //
+        logP = new JPanel();
+
         map = new Map();
         log = new JTextArea("Server started " + isServerWorking + "\n");
         log.setBounds(10,30, 150,150);
-        add(log);
+        logP.add(log);
+        add(logP);
         setVisible(true); // Visible window
 //        logF.add(log);
 //        add(logF);
@@ -44,7 +46,9 @@ public class ServerWindow extends JFrame{
         btnExit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+
+                isServerWorking = false;
+                log.setText("Server started " + isServerWorking + "\n");
             }
         });
 
@@ -52,10 +56,11 @@ public class ServerWindow extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
 
-//                 рабочая наполовину
+//                 рабочая
+
                 isServerWorking = true;
-                log = new JTextArea("Server started " + isServerWorking + "\n");
-                add(log);
+                log.setText("Server started " + isServerWorking + "\n");
+                settingWindow.setVisible(true);
 
 
 //через окно настроек
@@ -79,5 +84,6 @@ public class ServerWindow extends JFrame{
 
 
     }
+
 
 }
