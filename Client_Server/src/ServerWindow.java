@@ -4,42 +4,46 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ServerWindow extends JFrame{
-    private static final int WIDTH = 600;
-    private static final int HEIGHT = 600;
+    private static final int WIDTH = 300;
+    private static final int HEIGHT = 300;
 
-    JButton btnStart, btnExit;
-    SettingWindow settingWindow;
-    JTextArea log;
-    JPanel logF;
+    // Add pannel and button on window
+    JButton btnStart, btnExit; //
+    SettingWindow settingWindow; // window
+    JTextArea log; // text area
+    JPanel logF; // pannel
+    Map map;
 
-    boolean isServerWorking;
+
+    boolean isServerWorking; // добавляем константу состояния сервера
+
 
     ServerWindow(){
-        isServerWorking = false;
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(WIDTH, HEIGHT);
+        isServerWorking = false; // изначальное состояние сервера
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // default close
+        setSize(WIDTH, HEIGHT); // set size window
+        setLocationRelativeTo(null); // window to center
 
-        setTitle("Start server");
-        setResizable(false);
-        btnStart = new JButton("Start");
-        btnExit = new JButton("Exit");
-
-        JPanel logJP = new JPanel();
-
-
+        // инициализация
+        setTitle("Start server"); // титул окошка
+        setResizable(false); // запрет на изменения размера
+        btnStart = new JButton("Start"); // инициализация кнопки
+        btnExit = new JButton("Exit"); // инициализация кнопки
+        settingWindow = new SettingWindow(this); // setting window
+//        logF = new JPanel(); //
+        map = new Map();
         log = new JTextArea("Server started " + isServerWorking + "\n");
-        log.setBounds(10,30, 200,200);
-        setVisible(true);
-        logJP.add(log);
-        add(logJP);
+        log.setBounds(10,30, 150,150);
+        add(log);
+        setVisible(true); // Visible window
+//        logF.add(log);
+//        add(logF);
 
 
 
         btnExit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                isServerWorking = false;
-                System.out.println("Server stopped " + isServerWorking + "\n");
                 System.exit(0);
             }
         });
@@ -47,20 +51,24 @@ public class ServerWindow extends JFrame{
         btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+//                 рабочая наполовину
                 isServerWorking = true;
                 log = new JTextArea("Server started " + isServerWorking + "\n");
-                log.setBounds(10,30, 200,200);
-                setVisible(true);
-                logJP.add(log);
-                add(logJP);
+                add(log);
 
 
-//                System.out.println("Server started " + isServerWorking + "\n");
+//через окно настроек
 //                settingWindow.setVisible(true);
 //                log.append("Server started " + isServerWorking + "\n");
             }
         });
 
+
+
+
+
+        // размещение панели снизу
         JPanel panBottom = new JPanel(new GridLayout(1, 2));
 
         panBottom.add(btnStart);
@@ -68,7 +76,7 @@ public class ServerWindow extends JFrame{
 
         add(panBottom, BorderLayout.SOUTH);
 //        add(map);
-        setVisible(true);
+
 
     }
 
