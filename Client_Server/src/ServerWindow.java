@@ -32,18 +32,31 @@ public class ServerWindow extends JFrame{
         setTitle("Chat server"); // титул окошка
         setResizable(false); // запрет на изменения размера
 //
-        setVisible(true); // Visible window
-//
-        }
 
-        public boolean connectUser(ClientGUI clientGUI){
-            if (!isServerWorking){
-                return false;
-            }
-            clientGUIList.add(clientGUI);
-            return true;
+        createPanel();
+        setVisible(true); // Visible window
+
+//
+       }
+
+    public boolean connectUser(ClientGUI clientGUI){
+        if (!isServerWorking){
+            return false;
         }
-        private String readLog(){
+        clientGUIList.add(clientGUI);
+        return true;
+    }
+
+    public String getLog(){return readLog();}
+
+    public void disconnectUser(ClientGUI clientGUI){
+        clientGUIList.remove(clientGUI);
+        if (clientGUI != null){
+            clientGUI.disconnectFromServer();
+        }
+    }
+
+    private String readLog(){
         StringBuilder stringBuilder = new StringBuilder();
         try (FileReader reader = new FileReader(LOG_PATH);){
             int c;
@@ -55,14 +68,6 @@ public class ServerWindow extends JFrame{
         } catch (Exception e){
             e.printStackTrace();
             return null;
-            }
-        }
-        public String getLog(){return readLog();}
-
-    public void disconnectUser(ClientGUI clientGUI){
-        clientGUIList.remove(clientGUI);
-        if (clientGUI != null){
-            clientGUI.disconnectFromServer();
         }
     }
 
