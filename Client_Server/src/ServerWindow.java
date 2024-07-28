@@ -2,88 +2,142 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
 
 public class ServerWindow extends JFrame{
-    private static final int WIDTH = 300;
-    private static final int HEIGHT = 300;
+    public static final int WIDTH = 300;
+    public static final int HEIGHT = 300;
+    public static final  String LOG_PATH = "src/log.txt";
 
-    // Add pannel and button on window
-    JButton btnStart, btnExit; //
-    SettingWindow settingWindow; // window
+    ArrayList<ClientGUI> clientGUIList; // инициализация списка клиентов
+
+
+    JButton btnStart, btnStop; //
+
     JTextArea log; // text area
-    JPanel logP; // pannel
-    Map map;
 
-
-    boolean isServerWorking; // добавляем константу состояния сервера
+    boolean isServerWorking; // изначальное состояние сервера
 
 
     ServerWindow(){
-        isServerWorking = false; // изначальное состояние сервера
+        clientGUIList = new ArrayList<>(); // инициализация списка клиентов на сервере
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // default close
         setSize(WIDTH, HEIGHT); // set size window
         setLocationRelativeTo(null); // window to center
 
         // инициализация
-        setTitle("Start server"); // титул окошка
+        setTitle("Chat server"); // титул окошка
         setResizable(false); // запрет на изменения размера
-        btnStart = new JButton("Start"); // инициализация кнопки
-        btnExit = new JButton("Exit"); // инициализация кнопки
-        settingWindow = new SettingWindow(this); // setting window
-        logP = new JPanel();
-
-        map = new Map();
-        log = new JTextArea("Server started " + isServerWorking + "\n");
-        log.setBounds(10,30, 150,150);
-        logP.add(log);
-        add(logP);
+//
         setVisible(true); // Visible window
-//        logF.add(log);
-//        add(logF);
+//
+        }
 
-
-
-        btnExit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                isServerWorking = false;
-                log.setText("Server started " + isServerWorking + "\n");
+        public boolean connectUser(ClientGUI clientGUI){
+            if (!isServerWorking){
+                return false;
             }
-        });
+            clientGUIList.add(clientGUI);
+            return true;
+        }
+        private String readLog(){
+        StringBuilder stringBuilder = new StringBuilder();
+        try (FileReader reader = new FileReader(LOG_PATH);){
+            int c;
+            while ((c = reader.read()) != -1){
+                stringBuilder.append((char) c);
+            }
+            stringBuilder.delete(stringBuilder.length()-1, stringBuilder.length());
+            return stringBuilder.toString();
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+            }
+        }
+        public String getLog(){return readLog();}
+
+    public void disconnectUser(ClientGUI clientGUI){
+        clientGUIList.remove(clientGUI);
+        if (clientGUI != null){
+            clientGUI.disconnectFromServer();
+        }
+    }
+
+    private void appendLog(String text){
+        log.append(text + "\n");
+    }
+
+    private void createPanel() {
+        log = new JTextArea();
+        add(log);
+        add(createButtons(), BorderLayout.SOUTH);
+    }
+
+    private Component createButtons() {
+        JPanel panel = new JPanel(new GridLayout(1, 2));
+        btnStart = new JButton("Start");
+        btnStop = new JButton("Stop");
 
         btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-//                 рабочая
-
-                isServerWorking = true;
-                log.setText("Server started " + isServerWorking + "\n");
-                settingWindow.setVisible(true);
-
-
-//через окно настроек
-//                settingWindow.setVisible(true);
-//                log.append("Server started " + isServerWorking + "\n");
+                if (isServerWorking){
+                    appendLog("Сервер уже был запущен");
+                } else {
+                    isServerWorking = true;
+                    appendLog("Сервер запущен!");
+                }
             }
         });
 
+        btnStop.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!isServerWorking){
+                    appendLog("Сервер уже был остановлен");
+                } else {
+                    isServerWorking = false;
+                    while (!clientGUIList.isEmpty()){
+                        disconnectUser(clientGUIList.get(clientGUIList.size()-1));
+                    }
+                    appendLog("Сервер остановлен!");
+                }
+            }
+        });
 
+        panel.add(btnStart);
+        panel.add(btnStop);
+        return panel;
+    }
 
+    private void answerAll(String text){
+        for (ClientGUI clientGUI: clientGUIList){
+            clientGUI.answer(text);
+        }
+    }
 
+     private void saveInLog(String text){
+        try (FileWriter writer = new FileWriter(LOG_PATH, true)){
+            writer.write(text);
+            writer.write("\n");
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
-        // размещение панели снизу
-        JPanel panBottom = new JPanel(new GridLayout(1, 2));
-
-        panBottom.add(btnStart);
-        panBottom.add(btnExit);
-
-        add(panBottom, BorderLayout.SOUTH);
-//        add(map);
-
+    public void message(String text){
+        if (!isServerWorking){
+            return;
+        }
+        text += "";
+        appendLog(text);
+        answerAll(text);
+        saveInLog(text);
+    }
 
     }
 
 
-}

@@ -2,6 +2,9 @@
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        new ServerWindow();
+        ServerWindow serverWindow = new ServerWindow();
+
+        new ClientGUI(serverWindow);
+        new ClientGUI(serverWindow);
     }
 }
