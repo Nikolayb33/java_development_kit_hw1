@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class ServerWindow extends JFrame{
     public static final int WIDTH = 300;
     public static final int HEIGHT = 300;
-    public static final  String LOG_PATH = "src/log.txt";
+    public static final  String LOG_PATH = "Client_Server/src/log.txt";
 
     ArrayList<ClientGUI> clientGUIList; // инициализация списка клиентов
 
